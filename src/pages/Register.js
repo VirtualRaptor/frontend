@@ -1,54 +1,33 @@
-// frontend/src/pages/Register.js
 import React, { useState } from "react";
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
 import { useNavigate } from "react-router-dom";
 
-function Register() {
-  const navigate = useNavigate();
+const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-  const handleRegister = async () => {
+  const handleRegister = async (e) => {
+    e.preventDefault();
     try {
-      const res = await fetch("http://localhost:5000/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-      if (data.error) {
-        alert(data.error);
-      } else {
-        alert("Sprawdź mail weryfikacyjny!");
-        navigate("/login");
-      }
-    } catch (err) {
-      console.log(err);
-      alert("Błąd serwera");
+      await createUserWithEmailAndPassword(auth, email, password);
+      navigate("/login");
+    } catch (error) {
+      console.error("Błąd rejestracji:", error.message);
     }
   };
 
   return (
-    <div className="container text-center mt-5" style={{ maxWidth: 500 }}>
+    <div>
       <h2>Rejestracja</h2>
-      <input
-        type="email"
-        className="form-control mb-2"
-        placeholder="Email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-      />
-      <input
-        type="password"
-        className="form-control mb-2"
-        placeholder="Hasło"
-        value={password}
-        onChange={e => setPassword(e.target.value)}
-      />
-      <button className="btn btn-primary w-100" onClick={handleRegister}>
-        Zarejestruj
-      </button>
+      <form onSubmit={handleRegister}>
+        <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
+        <input type="password" placeholder="Hasło" onChange={(e) => setPassword(e.target.value)} />
+        <button type="submit">Zarejestruj się</button>
+      </form>
     </div>
   );
-}
+};
 
 export default Register;

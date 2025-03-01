@@ -1,3 +1,4 @@
+// src/pages/Quiz.js
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
@@ -6,6 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
+// Lista pytań i ikon
 const questions = [
   { text: "Czuję się wyczerpany/a w pracy.", icon: <FaRegTired style={{ color: "#ff5e57" }} /> },
   { text: "Nie mam energii do wykonywania obowiązków.", icon: <FaRegTired style={{ color: "#ff5e57" }} /> },
@@ -36,36 +38,37 @@ function Quiz() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Sprawdzamy, czy user jest zalogowany
+  // Sprawdzamy, czy użytkownik jest zalogowany (np. userId w localStorage).
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (!userId) {
+      // Jeśli brak userId, to przekieruj do logowania
       navigate("/login");
     }
   }, [navigate]);
 
-  // Dane z Home.js
+  // Odbieramy dane z Home.js (imię, wiek, zawód, godziny pracy) – jeśli tam są
   const userData = location.state || {};
   console.log("📌 Otrzymane dane w Quiz.js:", userData);
 
-  // Stany
+  // Stany: odpowiedzi, indeks aktualnego pytania, postęp, tryb ciemny
   const [answers, setAnswers] = useState({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const totalQuestions = questions.length;
-
-  // Dark Mode
   const [darkMode, setDarkMode] = useState(false);
 
-  // Obliczanie postępu (w %)
+  // Obliczanie procentu odpowiedzi
   useEffect(() => {
     setProgress((Object.keys(answers).length / totalQuestions) * 100);
   }, [answers, totalQuestions]);
 
+  // Zapis wybranej odpowiedzi
   const handleAnswerChange = (index, value) => {
-    setAnswers(prev => ({ ...prev, [index]: value }));
+    setAnswers((prev) => ({ ...prev, [index]: value }));
   };
 
+  // Następne pytanie
   const handleNext = () => {
     if (!answers[currentQuestionIndex]) {
       toast.error("⚠️ Wybierz jedną z odpowiedzi!", {
@@ -76,19 +79,22 @@ function Quiz() {
       return;
     }
     if (currentQuestionIndex < totalQuestions - 1) {
-      setCurrentQuestionIndex(prev => prev + 1);
+      setCurrentQuestionIndex((prev) => prev + 1);
     } else {
       handleSubmit();
     }
   };
 
+  // Poprzednie pytanie
   const handlePrev = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
+      setCurrentQuestionIndex((prev) => prev - 1);
     }
   };
 
+  // Zakończenie testu i przejście do wyników
   const handleSubmit = () => {
+    // weryfikacja, czy wszystkie pytania zostały zaznaczone
     if (Object.keys(answers).length < totalQuestions) {
       toast.error("⚠️ Odpowiedz na wszystkie pytania!", {
         position: "top-center",
@@ -97,19 +103,21 @@ function Quiz() {
       });
       return;
     }
-    // Przejście do ekranu wyników
+    // Przekazanie odpowiedzi do komponentu Results
     navigate("/results", { state: { ...userData, answers } });
   };
 
+  // Animacje framer-motion
   const containerVariants = {
     initial: { opacity: 0, x: 50 },
     animate: { opacity: 1, x: 0 },
     exit: { opacity: 0, x: -50 },
   };
 
-  const toggleDarkMode = () => setDarkMode(prev => !prev);
+  // Przełączanie trybu
+  const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
-  // Tło
+  // Styl tła
   const quizStyle = {
     margin: 0,
     padding: 0,
@@ -150,21 +158,20 @@ function Quiz() {
         </div>
       </div>
 
-      {/* Przycisk jasny/ciemny */}
+      {/* Przycisk trybu jasny/ciemny */}
       <div style={{ padding: "10px", textAlign: "right" }}>
-        <button
-          className="btn btn-outline-secondary"
-          onClick={toggleDarkMode}
-        >
+        <button className="btn btn-outline-secondary" onClick={toggleDarkMode}>
           {darkMode ? "Tryb Jasny" : "Tryb Ciemny"}
         </button>
       </div>
 
+      {/* Karta z pytaniem */}
       <div
         className="card p-4 shadow-lg"
         style={{
           maxWidth: "600px",
-          margin: "60px auto 0 auto",
+          // Tutaj zmieniamy margines, by nie było odstępu od góry
+          margin: "0 auto",
           backgroundColor: darkMode ? "rgba(68,68,68,0.9)" : "rgba(255,255,255,0.9)",
           color: darkMode ? "#f0f0f0" : "#333",
           borderRadius: "12px",
@@ -195,6 +202,7 @@ function Quiz() {
           </motion.div>
         </AnimatePresence>
 
+        {/* Przyciski nawigacji */}
         <div className="d-flex justify-content-between mt-4">
           {currentQuestionIndex > 0 ? (
             <button className="btn btn-secondary" onClick={handlePrev}>
@@ -219,6 +227,7 @@ function Quiz() {
   );
 }
 
+// Komponent pojedynczego pytania
 function SingleQuestion({ questionIndex, question, options, selected, onAnswer, darkMode }) {
   return (
     <div
