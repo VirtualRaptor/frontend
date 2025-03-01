@@ -11,15 +11,22 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      navigate("/");
+      console.log("🔑 Próba logowania:", { email, password });
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log("✅ Zalogowano:", userCredential.user);
+
+      // Zapisz ID użytkownika w localStorage
+      localStorage.setItem("userId", userCredential.user.uid);
+
+      // Przekierowanie do Home.js
+      navigate("/home");
     } catch (error) {
-      console.error("Błąd logowania:", error.message);
+      console.error("❌ Błąd logowania:", error.message);
     }
   };
 
   return (
-    <div>
+    <div className="login-container">
       <h2>Logowanie</h2>
       <form onSubmit={handleLogin}>
         <input type="email" placeholder="Email" onChange={(e) => setEmail(e.target.value)} />
