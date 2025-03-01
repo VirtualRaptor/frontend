@@ -1,0 +1,256 @@
+/* -------- Ogólne style dla całego body -------- */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Każdy element będzie dziedziczył box-sizing: border-box */
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+/* Kontener generalny (Bootstrap .container) jest centrowany w Home/Quiz/Results. 
+   Aby zapobiec przeskakiwaniu przy długim contencie, dopuszczamy scroll w pionie. */
+body > .container {
+  margin: 40px auto;
+  max-width: 1000px; 
+}
+
+/* ---------- Karty (np. w Home i Quiz) ---------- */
+.card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 30px;
+  margin-bottom: 30px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.18);
+}
+
+/* Tytuł w kartach */
+.card h1 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* ---------- Formularze w Home ---------- */
+.form-control {
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  padding: 10px;
+  margin-bottom: 15px;
+  transition: border-color 0.2s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #007bff; 
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+}
+
+/* Przyciski formularza (np. Rozpocznij test) */
+.btn-primary {
+  background-color: #007bff !important;
+  border: none !important;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3 !important;
+}
+
+/* ---------- Quiz ---------- */
+/* Styl pojedynczego pytania (możesz dodać klasę .quiz-question w Quiz.js) */
+.quiz-question {
+  background-color: #f0f8ff;
+  border: 1px solid #dceefb;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.quiz-question p {
+  margin-bottom: 12px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Przyciski odpowiedzi w quizie */
+.btn-group .btn {
+  font-size: 0.9rem;
+  border-radius: 5px !important;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-group .btn:last-child {
+  margin-right: 0;
+}
+
+.btn-group .btn.active {
+  background-color: #007bff !important;
+  color: #fff !important;
+  border-color: #007bff !important;
+}
+
+/* ---------- Pasek postępu (Quiz) ---------- */
+.progress {
+  height: 8px;
+  background-color: #e9ecef;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  background-color: #28a745;
+  transition: width 0.4s ease;
+}
+
+/* ---------- Sekcja wyników (Results) ---------- */
+.results-card {
+  margin: 0 auto;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 30px;
+  background-color: #fff;
+  width: 100%;
+  max-width: 800px; 
+}
+
+.results-card h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+/* Tła sekcji w wynikach */
+[style*='background-color: #eef5ff'] {
+  background-color: #eef5ff !important;
+}
+
+[style*='background-color: #f8f9fa'] {
+  background-color: #f8f9fa !important;
+}
+
+[style*='background-color: #fff3cd'] {
+  background-color: #fff3cd !important;
+}
+
+/* Nagłówki w sekcjach: .text-primary, .text-secondary, .text-warning */
+h3.text-primary {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #007bff !important;
+  margin-bottom: 0.5rem;
+}
+
+h4.text-secondary {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color: #6c757d !important;
+  margin-bottom: 0.5rem;
+}
+
+/* Tekst w .results-card */
+.results-card p {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.results-card ul {
+  margin-left: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.results-card ul li {
+  margin-bottom: 8px;
+}
+
+/* Karty wykresu */
+.chart-container {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Button .btn-success (Zakończ test) */
+.btn-success {
+  background-color: #28a745 !important;
+  border: none !important;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.btn-success:hover {
+  background-color: #218838 !important;
+}
+
+/* Toastify */
+.Toastify__toast-container {
+  margin-top: 70px;
+}
+
+.Toastify__toast {
+  border-radius: 8px;
+  font-family: inherit;
+}
+
+.Toastify__toast--error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* ---------- Responsywność ---------- */
+@media (max-width: 768px) {
+  .card,
+  .results-card {
+    margin: 20px;
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  h3.text-primary {
+    font-size: 1.2rem;
+  }
+
+  h4.text-secondary {
+    font-size: 1.1rem;
+  }
+}
+.card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 30px;
+  margin-bottom: 30px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.18);
+}
