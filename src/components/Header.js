@@ -1,16 +1,15 @@
-// src/components/Header.js
+// frontend/src/components/Header.js
 import React, { useState, useEffect } from "react";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 function Header() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Nasłuchujemy zmian w stanie logowania
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser);
     });
@@ -20,7 +19,6 @@ function Header() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      localStorage.removeItem("userId");
       toast.success("Wylogowano!");
       navigate("/login");
     } catch (error) {
@@ -45,6 +43,21 @@ function Header() {
           <span style={{ marginRight: "10px" }}>
             Zalogowany: {user.email}
           </span>
+          {user.email === "nikodemus.mat@gmail.com" && (
+            <Link
+              to="/admin"
+              style={{
+                color: "#fff",
+                textDecoration: "none",
+                marginRight: "10px",
+                border: "1px solid #fff",
+                padding: "2px 6px",
+                borderRadius: "4px"
+              }}
+            >
+              Admin Panel
+            </Link>
+          )}
           <button
             className="btn btn-sm btn-outline-light"
             onClick={handleLogout}

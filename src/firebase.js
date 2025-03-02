@@ -1,8 +1,10 @@
 // src/firebase.js
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
+  // Twoje dane konfiguracyjne
   apiKey: "AIzaSyA8_-IsyMqlG9D9qhtdV-Afh04MyClSO7o",
   authDomain: "wypalenie-zawodowe.firebaseapp.com",
   projectId: "wypalenie-zawodowe",
@@ -12,9 +14,9 @@ const firebaseConfig = {
   measurementId: "G-2CT5V8WXD4"
 };
 
-// Inicjalizacja Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app); // <-- to jest nasz Firestore
 
-export { auth };
+export { auth, db };
 export default app;

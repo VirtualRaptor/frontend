@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { auth, db } from "../firebase";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
 import { motion } from "framer-motion";
 import { Bar } from "react-chartjs-2";
 import { FaChartBar, FaExclamationTriangle, FaInfoCircle } from "react-icons/fa";
@@ -13,7 +15,6 @@ import {
   Legend
 } from "chart.js";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
 // Motywacyjne cytaty (przykładowe)
 const quotes = {
   low: "Świetnie sobie radzisz – trzymaj tak dalej!",
@@ -803,33 +804,25 @@ const jobNames = {
   programista: "Programista",
   tester: "Tester oprogramowania",
   admin: "Administrator systemów",
-  uxui: "UX/UI Designer",
   data_scientist: "Data Scientist",
-  devops: "DevOps Engineer",
+  pracownik_korporacji: "Pracownik korporacji",
+  menedżer: "Menedżer",
+  sekretarka: "Sekretarka",
+  hr: "Specjalista HR",
+  księgowy: "Księgowy",
   analityk: "Analityk danych",
-  notariusz: "Notariusz",
   prawnik: "Prawnik",
   sędzia: "Sędzia",
   prokurator: "Prokurator",
+  notariusz: "Notariusz",
   radca_prawny: "Radca prawny",
   adwokat: "Adwokat",
+  marynarz: "Marynarz",
+  kapitan: "Kapitan statku",
+  mechanik_morski: "Mechanik morski",
+  elektronik_morski: "Elektronik morski",
+  oficer_pokładowy: "Oficer pokładowy",
   budowlaniec: "Pracownik budowlany",
-  mechanik: "Mechanik",
-  kurier: "Kurier",
-  kelner: "Kelner",
-  sprzedawca: "Sprzedawca",
-  rolnik: "Rolnik",
-  kierowca: "Kierowca ciężarówki",
-  magazynier: "Magazynier",
-  elektryk: "Elektryk",
-  hydraulik: "Hydraulik",
-  kucharz: "Kucharz",
-  fryzjer: "Fryzjer",
-  grafik: "Grafik komputerowy",
-  dziennikarz: "Dziennikarz",
-  marketingowiec: "Specjalista ds. marketingu",
-  hr: "Specjalista HR",
-  księgowy: "Księgowy",
   inne: "Inny zawód"
 };
 
@@ -839,11 +832,11 @@ function Results() {
   const formData = location.state || {};
   const answers = formData.answers || {};
 
-  // Liczymy wyniki
-  const exhaustion = [0,1,2,3,4,5].reduce((acc, i) => acc + (answers[i] || 0), 0);
-  const cynicism = [6,7,8,9,10].reduce((acc, i) => acc + (answers[i] || 0), 0);
-  const inefficacy = [11,12,13,14,15].reduce((acc, i) => acc + (answers[i] || 0), 0);
-  const totalScore = exhaustion + cynicism + inefficacy;
+  // Obliczanie wyników
+  const exhaustionScore = [0,1,2,3,4,5].reduce((acc, i) => acc + (answers[i] || 0), 0);
+  const cynicismScore = [6,7,8,9,10].reduce((acc, i) => acc + (answers[i] || 0), 0);
+  const inefficacyScore = [11,12,13,14,15].reduce((acc, i) => acc + (answers[i] || 0), 0);
+  const totalScore = exhaustionScore + cynicismScore + inefficacyScore;
   const maxScore = 4 * Object.keys(answers).length;
   const percentage = ((totalScore / maxScore) * 100).toFixed(1);
 
@@ -860,20 +853,19 @@ function Results() {
     extraMessage = "Czas na zdecydowane kroki – zdrowie jest najważniejsze!";
   }
 
+  // Analiza + porady
   const resultAnalysis = getResultAnalysis(totalScore);
-
-  // Zawód
   const job = formData.job || "inne";
   const jobFullName = jobNames[job] || "Inny zawód";
   const jobDetails = jobAdvice[job] || jobAdvice["inne"];
 
-  // Wykres
+  // Dane do wykresu
   const chartData = {
     labels: ["Zmęczenie", "Cynizm", "Brak efektywności"],
     datasets: [
       {
         label: "Twój wynik",
-        data: [exhaustion, cynicism, inefficacy],
+        data: [exhaustionScore, cynicismScore, inefficacyScore],
         backgroundColor: ["#ff5e57", "#3498db", "#9b59b6"],
       },
     ],
@@ -889,41 +881,46 @@ function Results() {
 
   const backgroundColor = getResultColor(totalScore, maxScore);
 
-  // Zapis do bazy
+  // Zapis do Firestore
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    const userId = localStorage.getItem("userId");
-    if (!userId) return;
+    const saveResultToFirestore = async () => {
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          console.log("Brak zalogowanego użytkownika – nie zapisuję wyniku");
+          return;
+        }
 
-    const body = {
-      userId,
-      name: formData.name,
-      age: parseInt(formData.age || 0, 10),
-      occupation: formData.job,
-      workHours: parseInt(formData.workHours || 0, 10),
-      answers,
-      exhaustionScore: exhaustion,
-      disengagementScore: cynicism + inefficacy,
-      totalScore
+        // Możesz dodać logiczne zabezpieczenie, by nie zapisywać wielokrotnie w tej samej sesji
+        // localStorage.removeItem("savedResult"); // lub set
+        // if (localStorage.getItem("savedResult") === "true") return;
+
+        const resultData = {
+          userId: user.uid,
+          email: user.email,
+          name: formData.name || "",
+          age: parseInt(formData.age || 0, 10),
+          occupation: formData.job || "",
+          workHours: parseInt(formData.workHours || 0, 10),
+          answers,
+          exhaustionScore,
+          cynicismScore,
+          inefficacyScore,
+          totalScore,
+          createdAt: Timestamp.now()
+        };
+
+        await addDoc(collection(db, "results"), resultData);
+        console.log("Wynik zapisany w Firestore:", resultData);
+
+        // localStorage.setItem("savedResult", "true");
+      } catch (err) {
+        console.error("Błąd zapisu do Firestore:", err);
+      }
     };
 
-    fetch("http://localhost:5000/results/save", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    })
-      .then(res => res.json())
-      .then(data => {
-        if (data.error) {
-          console.error(data.error);
-        } else {
-          console.log("Wynik zapisany w bazie:", data);
-        }
-      })
-      .catch(err => console.error("Błąd zapisu:", err));
-  // Tylko gdy totalScore się zmieni (lub w momencie 1. wczytania)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [totalScore]);
+    saveResultToFirestore();
+  }, [answers, cynicismScore, exhaustionScore, formData, inefficacyScore, totalScore]);
 
   return (
     <motion.div
@@ -934,7 +931,7 @@ function Results() {
         background: "url('/images/burnout-bg.png') no-repeat center center fixed",
         backgroundSize: "cover",
         backgroundColor,
-        padding: "0", // usuń margines
+        padding: 0,
         transition: "background-color 0.5s ease"
       }}
     >

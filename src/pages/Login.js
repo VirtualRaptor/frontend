@@ -14,37 +14,22 @@ function Login() {
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-      console.log("Zalogowano przez Google:", user);
-      localStorage.setItem("userId", user.uid);
+      localStorage.setItem("userId", result.user.uid);
       navigate("/home");
     } catch (error) {
       console.error("Błąd logowania przez Google:", error.message);
-      let errorMessage;
-      switch (error.code) {
-        case "auth/popup-closed-by-user":
-          errorMessage = "Okno logowania zostało zamknięte przez użytkownika.";
-          break;
-        case "auth/invalid-credential":
-          errorMessage = "Podane dane logowania są nieprawidłowe.";
-          break;
-        default:
-          errorMessage = error.message;
-      }
-      toast.error(errorMessage, { position: "top-center", autoClose: 5000 });
+      toast.error(error.message, { position: "top-center", autoClose: 5000 });
     }
   };
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      console.log("Próba logowania:", { email, password });
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log("Zalogowano:", userCredential.user);
       localStorage.setItem("userId", userCredential.user.uid);
       navigate("/home");
     } catch (error) {
-      console.error("Błąd logowania:", error.message);
+      console.error("Błąd logowania:", error.code, error.message);
       let errorMessage;
       switch (error.code) {
         case "auth/user-not-found":
@@ -68,39 +53,57 @@ function Login() {
 
   return (
     <div
-      className="container d-flex justify-content-center align-items-center"
-      style={{ minHeight: "100vh" }}
+      style={{
+        minHeight: "100vh",
+        background: "url('/images/burnout-bg.png') no-repeat center center fixed",
+        backgroundSize: "cover"
+      }}
     >
-      <div
-        className="card p-4 shadow-lg text-center"
-        style={{ maxWidth: 400, width: "100%" }}
+      <div 
+        className="container d-flex justify-content-center align-items-center"
+        style={{ minHeight: "100vh" }}
       >
-        <h2 className="mb-3">Logowanie</h2>
         <ToastContainer />
-        <form onSubmit={handleLogin}>
-          <input
-            type="email"
-            placeholder="Email"
-            className="form-control mb-2"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Hasło"
-            className="form-control mb-3"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button type="submit" className="btn btn-primary w-100 mb-2">
-            Zaloguj się
+        
+        <div 
+          className="card p-4 shadow-lg text-center"
+          style={{ maxWidth: 400, width: "100%" }}
+        >
+          <h2 className="mb-3">Logowanie</h2>
+          
+          <form onSubmit={handleLogin}>
+            <input
+              type="email"
+              placeholder="Email"
+              className="form-control mb-2"
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              type="password"
+              placeholder="Hasło"
+              className="form-control mb-3"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <button type="submit" className="btn btn-primary w-100 mb-2">
+              Zaloguj się
+            </button>
+          </form>
+
+          <button
+            onClick={handleGoogleLogin}
+            className="btn btn-outline-primary w-100"
+          >
+            Zaloguj się przez Google
           </button>
-        </form>
-        <button onClick={handleGoogleLogin} className="btn btn-outline-primary w-100">
-          Zaloguj się przez Google
-        </button>
-        <hr style={{ margin: "20px 0" }} />
-        <p>
-          Nie masz konta? <a href="/register">Zarejestruj się</a>
-        </p>
+
+          <hr style={{ margin: "20px 0" }} />
+          <p className="mt-2">
+            Nie masz konta?{" "}
+            <a href="/register">
+              Zarejestruj się
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   );
