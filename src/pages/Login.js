@@ -2,17 +2,15 @@ import React, { useState } from "react";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
-  // Konfiguracja providera Google
   const googleProvider = new GoogleAuthProvider();
 
-  // Logowanie przez Google – wywołuje popup logowania,
-  // a po sukcesie zapisuje user.uid w localStorage i przekierowuje do strony głównej.
   const handleGoogleLogin = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
@@ -21,11 +19,22 @@ function Login() {
       localStorage.setItem("userId", user.uid);
       navigate("/home");
     } catch (error) {
-      console.error("Błąd logowania przez Google:", error);
+      console.error("Błąd logowania przez Google:", error.message);
+      let errorMessage;
+      switch (error.code) {
+        case "auth/popup-closed-by-user":
+          errorMessage = "Okno logowania zostało zamknięte przez użytkownika.";
+          break;
+        case "auth/invalid-credential":
+          errorMessage = "Podane dane logowania są nieprawidłowe.";
+          break;
+        default:
+          errorMessage = error.message;
+      }
+      toast.error(errorMessage, { position: "top-center", autoClose: 5000 });
     }
   };
 
-  // Logowanie przez email i hasło
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -36,6 +45,24 @@ function Login() {
       navigate("/home");
     } catch (error) {
       console.error("Błąd logowania:", error.message);
+      let errorMessage;
+      switch (error.code) {
+        case "auth/user-not-found":
+          errorMessage = "Podany adres e-mail nie jest zarejestrowany.";
+          break;
+        case "auth/wrong-password":
+          errorMessage = "Niepoprawne hasło.";
+          break;
+        case "auth/invalid-email":
+          errorMessage = "Nieprawidłowy adres e-mail.";
+          break;
+        case "auth/invalid-credential":
+          errorMessage = "Podane dane logowania są nieprawidłowe.";
+          break;
+        default:
+          errorMessage = error.message;
+      }
+      toast.error(errorMessage, { position: "top-center", autoClose: 5000 });
     }
   };
 
@@ -49,7 +76,7 @@ function Login() {
         style={{ maxWidth: 400, width: "100%" }}
       >
         <h2 className="mb-3">Logowanie</h2>
-        
+        <ToastContainer />
         <form onSubmit={handleLogin}>
           <input
             type="email"
@@ -67,13 +94,10 @@ function Login() {
             Zaloguj się
           </button>
         </form>
-
         <button onClick={handleGoogleLogin} className="btn btn-outline-primary w-100">
           Zaloguj się przez Google
         </button>
-
         <hr style={{ margin: "20px 0" }} />
-
         <p>
           Nie masz konta? <a href="/register">Zarejestruj się</a>
         </p>

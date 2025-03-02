@@ -1,4 +1,3 @@
-// src/App.js
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Home from "./pages/Home";
@@ -8,15 +7,16 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedRoute from "./ProtectedRoute";
 import PublicRoute from "./PublicRoute";
-import Header from "./components/Header"; // Import Header
+import Header from "./components/Header";
 import "./index.css";
 
 function App() {
   return (
     <Router>
-      <Header />  {/* Header wyświetli się w górnym rogu na każdej stronie */}
+      <Header />
       <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
+        {/* Usuwamy "replace" */}
+        <Route path="/" element={<Navigate to="/login" />} />
         <Route
           path="/login"
           element={

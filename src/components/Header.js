@@ -1,3 +1,4 @@
+// src/components/Header.js
 import React, { useState, useEffect } from "react";
 import { auth } from "../firebase";
 import { signOut } from "firebase/auth";
@@ -9,7 +10,7 @@ function Header() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Nasłuch zmian stanu autentykacji
+    // Nasłuchujemy zmian w stanie logowania
     const unsubscribe = auth.onAuthStateChanged((currentUser) => {
       setUser(currentUser);
     });
@@ -21,7 +22,6 @@ function Header() {
       await signOut(auth);
       localStorage.removeItem("userId");
       toast.success("Wylogowano!");
-      // Po wylogowaniu przekierowujemy do ekranu logowania
       navigate("/login");
     } catch (error) {
       toast.error("Błąd podczas wylogowania");
@@ -35,24 +35,31 @@ function Header() {
           style={{
             display: "flex",
             alignItems: "center",
-            background: "#f8f9fa",
+            background: "rgba(0, 0, 0, 0.5)",
+            color: "#fff",
             padding: "5px 10px",
             borderRadius: "5px",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+            boxShadow: "0 2px 4px rgba(0,0,0,0.3)"
           }}
         >
-          <span style={{ marginRight: "10px" }}>Zalogowany: {user.email}</span>
-          <button className="btn btn-sm btn-outline-danger" onClick={handleLogout}>
+          <span style={{ marginRight: "10px" }}>
+            Zalogowany: {user.email}
+          </span>
+          <button
+            className="btn btn-sm btn-outline-light"
+            onClick={handleLogout}
+          >
             Wyloguj
           </button>
         </div>
       ) : (
         <div
           style={{
-            background: "#f8f9fa",
+            background: "rgba(0, 0, 0, 0.5)",
+            color: "#fff",
             padding: "5px 10px",
             borderRadius: "5px",
-            boxShadow: "0 2px 4px rgba(0,0,0,0.1)"
+            boxShadow: "0 2px 4px rgba(0,0,0,0.3)"
           }}
         >
           Nie zalogowano

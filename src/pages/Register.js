@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, sendEmailVerification } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
@@ -16,25 +16,52 @@ function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      toast.success("Rejestracja powiodła się! Przejdź do logowania.", { position: "top-center", autoClose: 3000 });
+      // Tworzymy użytkownika w Firebase
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+      // Wysyłamy maila weryfikacyjnego
+      await sendEmailVerification(userCredential.user);
+
+      toast.success("Konto utworzone! Sprawdź email i kliknij link weryfikacyjny.", {
+        position: "top-center",
+        autoClose: 5000,
+      });
+
+      // Możesz zdecydować, czy od razu wylogować użytkownika czy nie.
+      // Tu przekierowujemy do /login, żeby użytkownik zalogował się dopiero po weryfikacji.
       navigate("/login");
     } catch (error) {
       console.error("Błąd rejestracji:", error.message);
-      toast.error(error.message, { position: "top-center", autoClose: 3000 });
+      let errorMessage;
+      switch (error.code) {
+        case "auth/email-already-in-use":
+          errorMessage = "Dany adres e-mail jest już zarejestrowany.";
+          break;
+        case "auth/invalid-email":
+          errorMessage = "Nieprawidłowy adres e-mail.";
+          break;
+        case "auth/weak-password":
+          errorMessage = "Hasło musi mieć co najmniej 6 znaków.";
+          break;
+        default:
+          errorMessage = error.message;
+      }
+      toast.error(errorMessage, { position: "top-center", autoClose: 5000 });
     }
+    
   };
 
   // Rejestracja / logowanie przez Google
   const handleGoogleRegister = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      console.log("Zarejestrowano / Zalogowano przez Google:", result.user);
-      localStorage.setItem("userId", result.user.uid);
+      // Dla Google weryfikacja emaila jest zwykle automatyczna, bo to zaufany provider
+      // localStorage.setItem("userId", result.user.uid);
+      toast.success("Zarejestrowano / Zalogowano przez Google!", { position: "top-center", autoClose: 3000 });
       navigate("/home");
     } catch (error) {
       console.error("Błąd rejestracji przez Google:", error.message);
-      toast.error(error.message, { position: "top-center", autoClose: 3000 });
+      toast.error(error.message, { position: "top-center", autoClose: 5000 });
     }
   };
 
@@ -90,7 +117,9 @@ function Register() {
         </p>
       </div>
     </div>
+    
   );
+  
 }
 
 export default Register;

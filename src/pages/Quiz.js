@@ -37,10 +37,6 @@ function Quiz() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Sprawdzamy, czy użytkownik jest zalogowany (np. userId w localStorage).
-  // Wcześniej można było to tutaj robić, ale mamy ProtectedRoute, więc jest ok.
-
-  // Odbieramy dane z Home.js (imię, wiek, zawód, godziny pracy) – jeśli tam są
   const userData = location.state || {};
   console.log("📌 Otrzymane dane w Quiz.js:", userData);
 
@@ -50,7 +46,6 @@ function Quiz() {
   const totalQuestions = questions.length;
   const [darkMode, setDarkMode] = useState(false);
 
-  // Obliczanie procentu odpowiedzi
   useEffect(() => {
     setProgress((Object.keys(answers).length / totalQuestions) * 100);
   }, [answers, totalQuestions]);
@@ -90,7 +85,6 @@ function Quiz() {
       });
       return;
     }
-    // Przekazanie odpowiedzi do komponentu Results
     navigate("/results", { state: { ...userData, answers } });
   };
 
@@ -102,6 +96,7 @@ function Quiz() {
 
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
+  // Tło i styl głównego kontenera
   const quizStyle = {
     margin: 0,
     padding: 0,
@@ -143,66 +138,85 @@ function Quiz() {
       </div>
 
       {/* Przycisk trybu jasny/ciemny */}
-      <div style={{ padding: "10px", textAlign: "right" }}>
+      <div 
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          padding: "10px",
+          zIndex: 9999
+        }}
+      >
         <button className="btn btn-outline-secondary" onClick={toggleDarkMode}>
           {darkMode ? "Tryb Jasny" : "Tryb Ciemny"}
         </button>
       </div>
 
-      {/* Karta z pytaniem */}
-      <div
-        className="card p-4 shadow-lg"
+      {/* Kontener wycentrowany w pionie i poziomie */}
+      <div 
         style={{
-          maxWidth: "600px",
-          margin: "0 auto",
-          backgroundColor: darkMode ? "rgba(68,68,68,0.9)" : "rgba(255,255,255,0.9)",
-          color: darkMode ? "#f0f0f0" : "#333",
-          borderRadius: "12px",
-          transition: "all 0.3s ease",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100vh",
+          // Dodajemy paddingTop, by nie nachodziło na pasek postępu
+          paddingTop: "60px"
         }}
       >
-        <h1 className="text-center mb-3">🧠 Test Wypalenia Zawodowego</h1>
-        <p className="text-center text-muted">
-          Pytanie {currentQuestionIndex + 1} z {totalQuestions}
-        </p>
+        {/* Karta z pytaniami */}
+        <div
+          className="card p-4 shadow-lg"
+          style={{
+            maxWidth: "600px",
+            backgroundColor: darkMode ? "rgba(68,68,68,0.9)" : "rgba(255,255,255,0.9)",
+            color: darkMode ? "#f0f0f0" : "#333",
+            borderRadius: "12px",
+            transition: "all 0.3s ease",
+          }}
+        >
+          <h1 className="text-center mb-3">🧠 Test Wypalenia Zawodowego</h1>
+          <p className="text-center text-muted">
+            Pytanie {currentQuestionIndex + 1} z {totalQuestions}
+          </p>
 
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentQuestionIndex}
-            variants={containerVariants}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-          >
-            <SingleQuestion
-              questionIndex={currentQuestionIndex}
-              question={questions[currentQuestionIndex]}
-              options={options}
-              selected={answers[currentQuestionIndex]}
-              onAnswer={handleAnswerChange}
-              darkMode={darkMode}
-            />
-          </motion.div>
-        </AnimatePresence>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentQuestionIndex}
+              variants={containerVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <SingleQuestion
+                questionIndex={currentQuestionIndex}
+                question={questions[currentQuestionIndex]}
+                options={options}
+                selected={answers[currentQuestionIndex]}
+                onAnswer={handleAnswerChange}
+                darkMode={darkMode}
+              />
+            </motion.div>
+          </AnimatePresence>
 
-        <div className="d-flex justify-content-between mt-4">
-          {currentQuestionIndex > 0 ? (
-            <button className="btn btn-secondary" onClick={handlePrev}>
-              Wstecz
-            </button>
-          ) : (
-            <div />
-          )}
+          <div className="d-flex justify-content-between mt-4">
+            {currentQuestionIndex > 0 ? (
+              <button className="btn btn-secondary" onClick={handlePrev}>
+                Wstecz
+              </button>
+            ) : (
+              <div />
+            )}
 
-          {currentQuestionIndex < totalQuestions - 1 ? (
-            <button className="btn btn-primary" onClick={handleNext}>
-              Dalej
-            </button>
-          ) : (
-            <button className="btn btn-success" onClick={handleNext}>
-              Zakończ
-            </button>
-          )}
+            {currentQuestionIndex < totalQuestions - 1 ? (
+              <button className="btn btn-primary" onClick={handleNext}>
+                Dalej
+              </button>
+            ) : (
+              <button className="btn btn-success" onClick={handleNext}>
+                Zakończ
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

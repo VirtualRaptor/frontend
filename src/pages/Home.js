@@ -131,11 +131,6 @@ function Home() {
           🚀 Rozpocznij test
         </button>
 
-        <hr />
-        <p>
-          Masz już konto? <a href="/login">Zaloguj się</a><br />
-          Nie masz konta? <a href="/register">Zarejestruj się</a>
-        </p>
       </div>
     </div>
   );
