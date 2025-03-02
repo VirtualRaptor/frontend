@@ -1,4 +1,3 @@
-// src/pages/Quiz.js
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
@@ -39,19 +38,12 @@ function Quiz() {
   const location = useLocation();
 
   // Sprawdzamy, czy użytkownik jest zalogowany (np. userId w localStorage).
-  useEffect(() => {
-    const userId = localStorage.getItem("userId");
-    if (!userId) {
-      // Jeśli brak userId, to przekieruj do logowania
-      navigate("/login");
-    }
-  }, [navigate]);
+  // Wcześniej można było to tutaj robić, ale mamy ProtectedRoute, więc jest ok.
 
   // Odbieramy dane z Home.js (imię, wiek, zawód, godziny pracy) – jeśli tam są
   const userData = location.state || {};
   console.log("📌 Otrzymane dane w Quiz.js:", userData);
 
-  // Stany: odpowiedzi, indeks aktualnego pytania, postęp, tryb ciemny
   const [answers, setAnswers] = useState({});
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -63,12 +55,10 @@ function Quiz() {
     setProgress((Object.keys(answers).length / totalQuestions) * 100);
   }, [answers, totalQuestions]);
 
-  // Zapis wybranej odpowiedzi
   const handleAnswerChange = (index, value) => {
     setAnswers((prev) => ({ ...prev, [index]: value }));
   };
 
-  // Następne pytanie
   const handleNext = () => {
     if (!answers[currentQuestionIndex]) {
       toast.error("⚠️ Wybierz jedną z odpowiedzi!", {
@@ -85,16 +75,13 @@ function Quiz() {
     }
   };
 
-  // Poprzednie pytanie
   const handlePrev = () => {
     if (currentQuestionIndex > 0) {
       setCurrentQuestionIndex((prev) => prev - 1);
     }
   };
 
-  // Zakończenie testu i przejście do wyników
   const handleSubmit = () => {
-    // weryfikacja, czy wszystkie pytania zostały zaznaczone
     if (Object.keys(answers).length < totalQuestions) {
       toast.error("⚠️ Odpowiedz na wszystkie pytania!", {
         position: "top-center",
@@ -107,17 +94,14 @@ function Quiz() {
     navigate("/results", { state: { ...userData, answers } });
   };
 
-  // Animacje framer-motion
   const containerVariants = {
     initial: { opacity: 0, x: 50 },
     animate: { opacity: 1, x: 0 },
     exit: { opacity: 0, x: -50 },
   };
 
-  // Przełączanie trybu
   const toggleDarkMode = () => setDarkMode((prev) => !prev);
 
-  // Styl tła
   const quizStyle = {
     margin: 0,
     padding: 0,
@@ -170,7 +154,6 @@ function Quiz() {
         className="card p-4 shadow-lg"
         style={{
           maxWidth: "600px",
-          // Tutaj zmieniamy margines, by nie było odstępu od góry
           margin: "0 auto",
           backgroundColor: darkMode ? "rgba(68,68,68,0.9)" : "rgba(255,255,255,0.9)",
           color: darkMode ? "#f0f0f0" : "#333",
@@ -202,7 +185,6 @@ function Quiz() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Przyciski nawigacji */}
         <div className="d-flex justify-content-between mt-4">
           {currentQuestionIndex > 0 ? (
             <button className="btn btn-secondary" onClick={handlePrev}>
@@ -227,7 +209,6 @@ function Quiz() {
   );
 }
 
-// Komponent pojedynczego pytania
 function SingleQuestion({ questionIndex, question, options, selected, onAnswer, darkMode }) {
   return (
     <div

@@ -7,6 +7,9 @@ body {
   font-family: 'Poppins', sans-serif;
   width: 100%;
   min-height: 100vh;
+
+  background: url("/public/images/burnout-bg.png") no-repeat center center fixed;
+  background-size: cover;
 }
 
 /* Każdy element będzie dziedziczył box-sizing: border-box */
@@ -241,6 +244,8 @@ h4.text-secondary {
     font-size: 1.1rem;
   }
 }
+
+/* Powielone style (dla pewności że wszystko jest) */
 .card {
   background-color: #fff;
   border-radius: 12px;
