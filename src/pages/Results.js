@@ -770,6 +770,81 @@ const jobAdvice = {
       "Znajdź czas na odpoczynek i relaks, aby unikać chronicznego zmęczenia."
     ]
   },
+  kucharz: {
+    powody_wypalenia: [
+      "Wymagające tempo pracy w godzinach szczytu.",
+      "Długie zmiany, często w niestandardowych porach (weekendy, wieczory).",
+      "Stres związany z utrzymaniem wysokiej jakości potraw i zadowoleniem klientów.",
+      "Monotonia pracy przy wykonywaniu podobnych dań każdego dnia.",
+      "Praca w wysokich temperaturach i hałaśliwym otoczeniu kuchennym.",
+      "Brak równowagi między życiem zawodowym a prywatnym."
+    ],
+    porady: [
+      "Dbaj o higienę snu, planując przerwy w pracy w miarę możliwości.",
+      "Stosuj ergonomiczne rozwiązania w kuchni, aby ograniczyć obciążenia fizyczne.",
+      "Wprowadzaj urozmaicenie w menu, by uniknąć rutyny i rozwijać umiejętności.",
+      "Rozdzielaj obowiązki w zespole kucharskim, by zmniejszyć presję czasową.",
+      "Dbaj o nawodnienie i właściwe odżywianie w trakcie pracy.",
+      "Znajdź czas na hobby poza pracą, by zredukować stres."
+    ]
+  },
+
+  fryzjer: {
+    powody_wypalenia: [
+      "Długotrwała praca w pozycji stojącej, obciążająca kręgosłup i nogi.",
+      "Presja związana z oczekiwaniami klientów co do efektu końcowego.",
+      "Kontakt z silnymi środkami chemicznymi (farby, preparaty fryzjerskie).",
+      "Częsty pośpiech i brak przerw przy napiętym grafiku.",
+      "Ryzyko kontuzji (np. bóle nadgarstków) przy powtarzalnych ruchach.",
+      "Brak docenienia zawodu oraz ograniczone możliwości rozwoju w niektórych salonach."
+    ],
+    porady: [
+      "Stosuj maty antyzmęczeniowe i ergonomiczne obuwie dla fryzjerów.",
+      "Rób krótkie przerwy na rozciąganie i odpoczynek w ciągu dnia.",
+      "W miarę możliwości ogranicz kontakt ze środkami chemicznymi, stosując rękawiczki i wentylację.",
+      "Rozwijaj umiejętności, uczęszczając na szkolenia i warsztaty fryzjerskie.",
+      "Stawiaj granice czasowe i unikaj przeładowanego grafiku.",
+      "Buduj relacje z klientami, aby zwiększyć satysfakcję z pracy i polecenia."
+    ]
+  },
+
+  rolnik: {
+    powody_wypalenia: [
+      "Praca uzależniona od warunków pogodowych i sezonowości.",
+      "Wysokie obciążenie fizyczne przy pracach polowych i hodowlanych.",
+      "Stres związany z nieprzewidywalnymi wahaniami cen produktów rolnych.",
+      "Duża odpowiedzialność za zdrowie zwierząt i upraw.",
+      "Częsty brak wsparcia i niedocenienie zawodu przez społeczeństwo.",
+      "Brak wyraźnego rozdzielenia między pracą a życiem osobistym na gospodarstwie."
+    ],
+    porady: [
+      "Planuj prace polowe z wyprzedzeniem, uwzględniając prognozy pogody.",
+      "Korzystaj z maszyn i narzędzi ułatwiających pracę fizyczną.",
+      "Szkol się w zakresie nowoczesnych technik rolniczych i zarządzania gospodarstwem.",
+      "Rozważ współpracę z innymi rolnikami i korzystaj z lokalnych grup wsparcia.",
+      "Zapewnij sobie regularne przerwy i wypoczynek, nawet podczas intensywnych okresów zbiorów.",
+      "Opracuj plan dywersyfikacji upraw lub hodowli, aby zmniejszyć ryzyko finansowe."
+    ]
+  },
+
+  sprzedawca: {
+    powody_wypalenia: [
+      "Długotrwała praca w pozycji stojącej i ciągły kontakt z klientem.",
+      "Presja na realizowanie planów sprzedażowych i osiąganie celów.",
+      "Możliwe trudne sytuacje z niezadowolonymi lub roszczeniowymi klientami.",
+      "Monotonia i powtarzalność codziennych zadań (obsługa kasy, układanie towaru).",
+      "Niskie wynagrodzenie w stosunku do wymagań i odpowiedzialności.",
+      "Brak możliwości awansu w małych placówkach handlowych."
+    ],
+    porady: [
+      "Rób krótkie przerwy na rozciąganie ciała, by zapobiegać zmęczeniu mięśni.",
+      "Buduj pozytywne relacje z klientami, co ułatwi obsługę i zmniejszy stres.",
+      "Wyznaczaj sobie codzienne cele, by urozmaicić rutynę i motywować się do działania.",
+      "Stosuj techniki radzenia sobie ze stresem, np. ćwiczenia oddechowe.",
+      "Korzystaj z programów szkoleniowych podnoszących kwalifikacje sprzedażowe.",
+      "Rozważ zmianę miejsca pracy lub branży, jeśli aktualna nie daje Ci satysfakcji."
+    ]
+  },
   "inne": {
     "powody_wypalenia": [
       "Monotonia pracy i brak możliwości rozwoju.",
@@ -823,6 +898,10 @@ const jobNames = {
   elektronik_morski: "Elektronik morski",
   oficer_pokładowy: "Oficer pokładowy",
   budowlaniec: "Pracownik budowlany",
+  kucharz: "Kucharz",
+  fryzjer: "Fryzjer",
+  rolnik: "Rolnik",
+  sprzedawca: "Sprzedawca",
   inne: "Inny zawód"
 };
 
@@ -845,7 +924,7 @@ function Results() {
   if (percentage < 30) {
     resultText = "✅ Niski poziom wypalenia zawodowego.";
     extraMessage = "Utrzymuj zdrowe nawyki i dbaj o profilaktykę!";
-  } else if (percentage < 60) {
+  } else if (percentage < 61) {
     resultText = "⚠️ Umiarkowane oznaki wypalenia.";
     extraMessage = "Warto pomyśleć o regeneracji i zmianie niektórych nawyków.";
   } else {
